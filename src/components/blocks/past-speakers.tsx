@@ -57,7 +57,7 @@ export function PastSpeakers() {
                       alt={speaker.name}
                       className="absolute inset-0 size-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/50 to-black/0" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/0" />
                     <figcaption className="absolute bottom-6 left-6 right-6">
                       <div className="transition-all duration-300 ease-out translate-y-2 md:group-hover:-translate-y-1">
                         <div className="text-white text-3xl font-extrabold leading-tight md:text-4xl">
