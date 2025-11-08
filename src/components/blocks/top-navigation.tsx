@@ -15,16 +15,39 @@ import {
 
 export function TopNavigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
+  const [scrolledPastHero, setScrolledPastHero] = React.useState(false)
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      // Hero section is 100vh, so check if scrolled past that
+      const heroHeight = window.innerHeight
+      setScrolledPastHero(window.scrollY > heroHeight * 0.8)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full">
-      <nav className="mx-auto max-w-7xl px-6 py-4 transition-all duration-300 lg:px-12">
-        <div className="flex items-center justify-between">
+      <nav
+        className={cn(
+          "w-full py-4 transition-all duration-300",
+          scrolledPastHero && "backdrop-blur-md bg-white/80"
+        )}
+      >
+        <div className="mx-auto max-w-7xl px-6 lg:px-12 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 z-50">
-            <div className="text-xl font-bold text-white">
+            <div className={cn(
+              "text-xl font-bold transition-colors duration-300",
+              scrolledPastHero ? "text-gray-900" : "text-white"
+            )}>
               Balance Conference
-              <span className="ml-2 text-sm font-normal text-purple-400">2026</span>
+              <span className={cn(
+                "ml-2 text-sm font-normal transition-colors duration-300",
+                scrolledPastHero ? "text-purple-600" : "text-purple-400"
+              )}>2026</span>
             </div>
           </Link>
 
@@ -34,7 +57,13 @@ export function TopNavigation() {
               <NavigationMenuList>
                 <NavigationMenuItem>
                   <Link href="/" legacyBehavior passHref>
-                    <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-white hover:bg-white/10")}>
+                    <NavigationMenuLink className={cn(
+                      navigationMenuTriggerStyle(),
+                      "bg-transparent transition-colors duration-300",
+                      scrolledPastHero
+                        ? "text-gray-900 hover:bg-gray-100"
+                        : "text-white hover:bg-white/10"
+                    )}>
                       Home
                     </NavigationMenuLink>
                   </Link>
@@ -42,7 +71,13 @@ export function TopNavigation() {
 
                 <NavigationMenuItem>
                   <Link href="/about" legacyBehavior passHref>
-                    <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-white hover:bg-white/10")}>
+                    <NavigationMenuLink className={cn(
+                      navigationMenuTriggerStyle(),
+                      "bg-transparent transition-colors duration-300",
+                      scrolledPastHero
+                        ? "text-gray-900 hover:bg-gray-100"
+                        : "text-white hover:bg-white/10"
+                    )}>
                       About
                     </NavigationMenuLink>
                   </Link>
@@ -50,7 +85,13 @@ export function TopNavigation() {
 
                 <NavigationMenuItem>
                   <Link href="/conferences" legacyBehavior passHref>
-                    <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-white hover:bg-white/10")}>
+                    <NavigationMenuLink className={cn(
+                      navigationMenuTriggerStyle(),
+                      "bg-transparent transition-colors duration-300",
+                      scrolledPastHero
+                        ? "text-gray-900 hover:bg-gray-100"
+                        : "text-white hover:bg-white/10"
+                    )}>
                       Conferences
                     </NavigationMenuLink>
                   </Link>
@@ -58,7 +99,13 @@ export function TopNavigation() {
 
                 <NavigationMenuItem>
                   <Link href="/speakers" legacyBehavior passHref>
-                    <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-white hover:bg-white/10")}>
+                    <NavigationMenuLink className={cn(
+                      navigationMenuTriggerStyle(),
+                      "bg-transparent transition-colors duration-300",
+                      scrolledPastHero
+                        ? "text-gray-900 hover:bg-gray-100"
+                        : "text-white hover:bg-white/10"
+                    )}>
                       Speakers
                     </NavigationMenuLink>
                   </Link>
@@ -66,7 +113,13 @@ export function TopNavigation() {
 
                 <NavigationMenuItem>
                   <Link href="/contact" legacyBehavior passHref>
-                    <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent text-white hover:bg-white/10")}>
+                    <NavigationMenuLink className={cn(
+                      navigationMenuTriggerStyle(),
+                      "bg-transparent transition-colors duration-300",
+                      scrolledPastHero
+                        ? "text-gray-900 hover:bg-gray-100"
+                        : "text-white hover:bg-white/10"
+                    )}>
                       Contact
                     </NavigationMenuLink>
                   </Link>
@@ -85,7 +138,12 @@ export function TopNavigation() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden z-50 p-2 text-white hover:bg-white/10 rounded-md transition-colors"
+            className={cn(
+              "lg:hidden z-50 p-2 rounded-md transition-colors",
+              scrolledPastHero
+                ? "text-gray-900 hover:bg-gray-100"
+                : "text-white hover:bg-white/10"
+            )}
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {mobileMenuOpen ? (
@@ -98,39 +156,69 @@ export function TopNavigation() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 bg-[#0A031B]/95 backdrop-blur-xl border-t border-white/10 mt-4">
+          <div className={cn(
+            "lg:hidden absolute top-full left-0 right-0 border-t mt-4 backdrop-blur-xl",
+            scrolledPastHero
+              ? "bg-white/95 border-gray-200"
+              : "bg-[#0A031B]/95 border-white/10"
+          )}>
             <div className="px-6 py-6 space-y-4">
               <Link
                 href="/"
-                className="block text-white hover:text-purple-400 transition-colors py-2"
+                className={cn(
+                  "block transition-colors py-2",
+                  scrolledPastHero
+                    ? "text-gray-900 hover:text-purple-600"
+                    : "text-white hover:text-purple-400"
+                )}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Home
               </Link>
               <Link
                 href="/about"
-                className="block text-white hover:text-purple-400 transition-colors py-2"
+                className={cn(
+                  "block transition-colors py-2",
+                  scrolledPastHero
+                    ? "text-gray-900 hover:text-purple-600"
+                    : "text-white hover:text-purple-400"
+                )}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 About
               </Link>
               <Link
                 href="/conferences"
-                className="block text-white hover:text-purple-400 transition-colors py-2"
+                className={cn(
+                  "block transition-colors py-2",
+                  scrolledPastHero
+                    ? "text-gray-900 hover:text-purple-600"
+                    : "text-white hover:text-purple-400"
+                )}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Conferences
               </Link>
               <Link
                 href="/speakers"
-                className="block text-white hover:text-purple-400 transition-colors py-2"
+                className={cn(
+                  "block transition-colors py-2",
+                  scrolledPastHero
+                    ? "text-gray-900 hover:text-purple-600"
+                    : "text-white hover:text-purple-400"
+                )}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Speakers
               </Link>
               <Link
                 href="/contact"
-                className="block text-white hover:text-purple-400 transition-colors py-2"
+                className={cn(
+                  "block transition-colors py-2",
+                  scrolledPastHero
+                    ? "text-gray-900 hover:text-purple-600"
+                    : "text-white hover:text-purple-400"
+                )}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Contact

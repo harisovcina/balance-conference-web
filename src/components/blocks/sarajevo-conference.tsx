@@ -80,7 +80,7 @@ export default function SarajevoConference({
         <div className="mt-10 grid gap-8 lg:mt-12 lg:grid-cols-2 lg:gap-12">
           <div>
             <h3 className="text-xl font-semibold text-foreground md:text-2xl">{resultTitle}</h3>
-            <p className="mt-3 text-base leading-7 text-muted-foreground md:text-lg">
+            <p className="text-base leading-7 text-muted-foreground">
               {resultBody}
             </p>
             <div className="mt-6">

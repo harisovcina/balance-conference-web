@@ -1,54 +1,83 @@
 'use client'
-import React from 'react'
-import { TopNavigation } from './top-navigation'
-import { AnimatedMarqueeHero } from '@/components/ui/hero-3'
-import { PastSpeakers } from './past-speakers'
-import SarajevoConference from './sarajevo-conference'
+import React, { useState } from 'react'
+import { motion } from 'motion/react'
+import Orb from '@/components/ui/Orb'
+import BlurText from '@/components/ui/BlurText'
+import Image from 'next/image'
 
-// Conference speaker and event images
-const CONFERENCE_IMAGES = [
-  "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=900&auto=format&fit=crop&q=60",
-  "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=900&auto=format&fit=crop&q=60",
-  "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=900&auto=format&fit=crop&q=60",
-  "https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=900&auto=format&fit=crop&q=60",
-  "https://images.unsplash.com/photo-1511578314322-379afb476865?w=900&auto=format&fit=crop&q=60",
-  "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=900&auto=format&fit=crop&q=60",
-  "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=900&auto=format&fit=crop&q=60",
-  "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=900&auto=format&fit=crop&q=60",
+const contentSequence = [
+  { type: 'text', content: 'Save the date!' },
+  { type: 'logo', content: '/assets/img/logo-balance.png' },
+  { type: 'text', content: 'Sarajevo 25-26.03.2026' },
+  { type: 'text', content: 'Redesign your future' },
+  { type: 'text', content: 'findyourbalance.net' }
 ]
+
+function LoopingTextAnimation() {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [key, setKey] = useState(0)
+
+  const handleAnimationComplete = () => {
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % contentSequence.length)
+      setKey((prev) => prev + 1)
+    }, 1600)
+  }
+
+  const currentItem = contentSequence[currentIndex]
+
+  if (currentItem.type === 'logo') {
+    return (
+      <motion.div
+        key={key}
+        initial={{ opacity: 0, y: -50, filter: 'blur(32px)' }}
+        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+        onAnimationComplete={handleAnimationComplete}
+        className="flex items-center justify-center"
+      >
+        <Image
+          src={currentItem.content}
+          alt="Balance Conference Logo"
+          width={640}
+          height={640}
+          className="h-[640px] w-auto object-contain"
+          priority
+        />
+      </motion.div>
+    )
+  }
+
+  return (
+    <BlurText
+      key={key}
+      text={currentItem.content}
+      delay={40}
+      animateBy="words"
+      direction="top"
+      onAnimationComplete={handleAnimationComplete}
+      className="text-4xl md:text-6xl font-bold text-white text-center"
+    />
+  )
+}
 
 export function HeroSection() {
     return (
-        <>
-            <TopNavigation />
-            <section style={{ backgroundColor: '#0A031B' }} className="w-full h-screen relative">
-                <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover"
-                    src="/assets/video/desktop.mp4"
+        <section style={{ backgroundColor: '#0A031B' }} className="w-full h-screen relative p-8">
+            {/* Orb Background */}
+            <div className="absolute inset-0 p-8">
+                <Orb
+                    hoverIntensity={0.5}
+                    rotateOnHover={true}
+                    hue={0}
+                    forceHoverState={false}
                 />
-            </section>
+            </div>
 
-            <AnimatedMarqueeHero
-                tagline="Join 500+ Leaders and Innovators"
-                title={
-                    <>
-                        Slow Down. Breathe In.
-                        <br />
-                        Begin Again.
-                    </>
-                }
-                description="The premier conference for visionaries seeking harmony between innovation and wellbeing. Connect with industry leaders, discover breakthrough ideas, and transform your approach to work and life."
-                ctaText="Register Now"
-                images={CONFERENCE_IMAGES}
-            />
-
-            <PastSpeakers />
-
-            <SarajevoConference />
-        </>
+            {/* Centered Text Animation */}
+            <div className="relative z-10 flex items-center justify-center h-full">
+                <LoopingTextAnimation />
+            </div>
+        </section>
     )
 }

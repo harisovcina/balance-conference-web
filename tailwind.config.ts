@@ -11,6 +11,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ['var(--font-general-sans)', 'sans-serif'],
+        'serif-display': ['var(--font-serif-display)', 'serif'],
       },
       aspectRatio: {
         '3/4': '3 / 4',
@@ -41,6 +42,21 @@ const config: Config = {
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
+          second: "hsl(var(--accent-second))",
+          magenta: "hsl(var(--accent-magenta))",
+          teal: "hsl(var(--accent-teal))",
+          sky: "hsl(var(--accent-sky))",
+          gold: "hsl(var(--accent-gold))",
+          green: "hsl(var(--accent-green))",
+          red: "hsl(var(--accent-red))",
+        },
+        balance: {
+          50: "hsl(var(--balance-50))",
+          100: "hsl(var(--balance-100))",
+          200: "hsl(var(--balance-200))",
+          300: "hsl(var(--balance-300))",
+          400: "hsl(var(--balance-400))",
+          500: "hsl(var(--balance-500))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",

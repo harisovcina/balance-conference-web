@@ -24,7 +24,7 @@ const speakers: Speaker[] = [
 
 export function PastSpeakers() {
   return (
-    <section className="bg-background py-20">
+    <section className="bg-background py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
         <div className="mb-10 flex items-end justify-between gap-6">
           <div>

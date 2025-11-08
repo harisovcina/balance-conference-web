@@ -18,6 +18,7 @@
     --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
+    --accent-second: 38 95% 61%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
@@ -29,6 +30,22 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+
+    /* Balance palette - purple hues (same for light and dark) */
+    --balance-50: 258 85% 95%;
+    --balance-100: 258 78% 84%;
+    --balance-200: 258 58% 64%;
+    --balance-300: 258 58% 40%;
+    --balance-400: 258 72% 15%;
+    --balance-500: 258 80% 6%;
+
+    /* Accent palette - non-purple hues (same for light and dark) */
+    --accent-magenta: 280 100% 62%;
+    --accent-teal: 188 100% 35%;
+    --accent-sky: 191 100% 50%;
+    --accent-gold: 38 95% 61%;
+    --accent-green: 150 70% 33%;
+    --accent-red: 346 77% 50%;
   }
 
   .dark {
@@ -46,6 +63,7 @@
     --muted-foreground: 215 20.2% 65.1%;
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
+    --accent-second: 38 95% 61%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
@@ -56,6 +74,22 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    /* Balance palette - purple hues (same for light and dark) */
+    --balance-50: 258 85% 95%;
+    --balance-100: 258 78% 84%;
+    --balance-200: 258 58% 64%;
+    --balance-300: 258 58% 40%;
+    --balance-400: 258 72% 15%;
+    --balance-500: 258 80% 6%;
+
+    /* Accent palette - non-purple hues (same for light and dark) */
+    --accent-magenta: 280 100% 62%;
+    --accent-teal: 188 100% 35%;
+    --accent-sky: 191 100% 50%;
+    --accent-gold: 38 95% 61%;
+    --accent-green: 150 70% 33%;
+    --accent-red: 346 77% 50%;
   }
 }
 
@@ -65,5 +99,14 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .hyphens-auto {
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
   }
 }
