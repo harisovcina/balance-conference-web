@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface AnimatedMarqueeHeroProps {
   tagline: string;
@@ -12,16 +13,6 @@ interface AnimatedMarqueeHeroProps {
   images: string[];
   className?: string;
 }
-
-const ActionButton = ({ children }: { children: React.ReactNode }) => (
-  <motion.button
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    className="mt-8 px-8 py-3 rounded-full bg-purple-600 text-white font-semibold shadow-lg transition-colors hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-75"
-  >
-    {children}
-  </motion.button>
-);
 
 export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
   tagline,
@@ -41,10 +32,9 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
   return (
     <section
       className={cn(
-        "relative w-full h-[50vh] md:h-[75vh] overflow-hidden bg-background flex flex-col items-center justify-center text-center mt-24 pt-48 pb-96",
+        "relative w-full min-h-[60vh] md:min-h-[75vh] overflow-x-hidden overflow-y-hidden bg-background flex flex-col items-center justify-center text-center pt-24 pb-64 px-4",
         className
       )}
-      style={{ height: '60vh' }}
     >
       <div className="z-10 flex flex-col items-center">
         <motion.div
@@ -67,7 +57,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
               },
             },
           }}
-          className="text-5xl md:text-7xl font-bold tracking-tighter text-foreground"
+          className="text-5xl md:text-7xl font-bold tracking-tighter text-balance-300"
         >
           {typeof title === 'string' ? (
             title.split(" ").map((word, i) => (
@@ -100,11 +90,13 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
           variants={FADE_IN_ANIMATION_VARIANTS}
           transition={{ delay: 0.6 }}
         >
-          <ActionButton>{ctaText}</ActionButton>
+          <Button size="lg" className="bg-balance-300 hover:bg-balance-400 text-white mt-8 rounded-lg">
+            {ctaText}
+          </Button>
         </motion.div>
       </div>
 
-      <div className="absolute bottom-0 left-0 w-full h-1/3 md:h-2/5 [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]">
+      <div className="absolute bottom-0 left-0 w-full h-1/3 md:h-2/5 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]">
         <motion.div
           className="flex gap-4"
           animate={{

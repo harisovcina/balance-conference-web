@@ -15,6 +15,7 @@ const buildKeyframes = (from, steps) => {
 
 const BlurText = ({
   text = '',
+  segments,
   delay = 200,
   className = '',
   animateBy = 'words',
@@ -29,31 +30,48 @@ const BlurText = ({
 }) => {
   // Group letters by words when animating by letters to prevent word breaking
   const processElements = useMemo(() => {
-    if (animateBy === 'words') {
-      return text.split(' ').map((word, index) => ({ type: 'word', content: word, index }));
-    } else {
-      // Split by words first, then group letters within each word
-      const words = text.split(' ');
-      const result = [];
-      let globalLetterIndex = 0;
-      
-      words.forEach((word, wordIndex) => {
-        const letters = word.split('');
-        result.push({
-          type: 'word-group',
-          letters: letters.map((letter, letterIndex) => ({
-            content: letter,
-            globalIndex: globalLetterIndex++
-          })),
-          wordIndex
+    const textSegments = segments || [{ text, color: undefined, lineBreak: false }];
+    const result = [];
+    let globalIndex = 0;
+    let globalLetterIndex = 0;
+
+    textSegments.forEach((segment, segmentIdx) => {
+      if (segment.lineBreak && result.length > 0) {
+        result.push({ type: 'break' });
+      }
+
+      if (animateBy === 'words') {
+        const words = segment.text.split(' ');
+        words.forEach((word, wordIdx) => {
+          result.push({
+            type: 'word',
+            content: word,
+            index: globalIndex++,
+            color: segment.color
+          });
         });
-        if (wordIndex < words.length - 1) {
-          result.push({ type: 'space', content: ' ' });
-        }
-      });
-      return result;
-    }
-  }, [text, animateBy]);
+      } else {
+        const words = segment.text.split(' ');
+        words.forEach((word, wordIndex) => {
+          const letters = word.split('');
+          result.push({
+            type: 'word-group',
+            letters: letters.map((letter, letterIndex) => ({
+              content: letter,
+              globalIndex: globalLetterIndex++
+            })),
+            wordIndex: globalIndex++,
+            color: segment.color
+          });
+          if (wordIndex < words.length - 1) {
+            result.push({ type: 'space', content: ' ' });
+          }
+        });
+      }
+    });
+
+    return result;
+  }, [text, segments, animateBy]);
 
   const [inView, setInView] = useState(false);
   const ref = useRef(null);
@@ -117,6 +135,11 @@ const BlurText = ({
   return (
     <p ref={ref} className={className} style={flexStyle}>
       {processElements.map((element, index) => {
+        // Handle line breaks
+        if (element.type === 'break') {
+          return <br key={`break-${index}`} />;
+        }
+
         if (animateBy === 'words') {
           const animateKeyframes = buildKeyframes(fromSnapshot, toSnapshots);
           const spanTransition = {
@@ -133,6 +156,7 @@ const BlurText = ({
               initial={fromSnapshot}
               animate={inView ? animateKeyframes : fromSnapshot}
               transition={spanTransition}
+              style={element.color ? { color: element.color } : undefined}
               onAnimationComplete={element.index === processElements.length - 1 ? onAnimationComplete : undefined}
             >
               {element.content}
@@ -154,7 +178,7 @@ const BlurText = ({
             });
 
             return (
-              <span key={`word-${element.wordIndex}`} className="inline-block whitespace-nowrap">
+              <span key={`word-${element.wordIndex}`} className="inline-block whitespace-nowrap" style={element.color ? { color: element.color } : undefined}>
                 {element.letters.map((letter, letterIdx) => {
                   const animateKeyframes = buildKeyframes(fromSnapshot, toSnapshots);
                   const globalLetterIndex = letterCount + letterIdx;

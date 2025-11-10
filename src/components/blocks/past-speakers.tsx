@@ -41,7 +41,7 @@ export function PastSpeakers() {
           </Link>
         </div>
 
-        <div className="relative">
+        <div className="relative -mr-12 lg:-mr-96">
           <div className="overflow-hidden rounded-4xl p-2 md:p-3">
             <InfiniteSlider gap={24} duration={60} durationOnHover={100000}>
               {speakers.map((speaker, idx) => (
@@ -75,12 +75,12 @@ export function PastSpeakers() {
           </div>
 
           <ProgressiveBlur
-            className="pointer-events-none absolute left-0 md:-left-16 top-0 h-full w-24 md:w-48"
+            className="pointer-events-none absolute left-0 top-0 h-full w-24 md:w-32"
             direction="left"
             blurIntensity={1}
           />
           <ProgressiveBlur
-            className="pointer-events-none absolute right-0 md:-right-16 top-0 h-full w-24 md:w-48"
+            className="pointer-events-none absolute right-0 top-0 h-full w-48 md:w-64 lg:w-80"
             direction="right"
             blurIntensity={1}
           />

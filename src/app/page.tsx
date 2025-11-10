@@ -4,6 +4,7 @@ import { AnimatedMarqueeHero } from "@/components/ui/hero-3";
 import SarajevoConference from "@/components/blocks/sarajevo-conference";
 import { PastSpeakers } from "@/components/blocks/past-speakers";
 import { HoverFooter } from "@/components/ui/hover-footer";
+import GradualBlur from "@/components/ui/gradual-blur";
 
 const CONFERENCE_IMAGES = [
   "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=900&auto=format&fit=crop&q=60",
@@ -19,15 +20,26 @@ const CONFERENCE_IMAGES = [
 export default function Home() {
   return (
     <>
-      <TopNavigation />
+      {/* GradualBlur effect for entire page */}
+      <GradualBlur
+        target="page"
+        position="bottom"
+        height="10rem"
+        strength={.5}
+        divCount={4}
+        opacity={1}
+        zIndex={1000}
+      />
+      
+      <TopNavigation scrollThreshold={880} />
       <HeroSection />
       <AnimatedMarqueeHero
-        tagline="Join 500+ Leaders and Innovators"
+        tagline="THE ART OF BALANCE"
         title={
           <>
             Slow Down. Breathe In.
             <br />
-            Begin Again.
+            Begin <span className="text-accent-magenta">Again.</span>
           </>
         }
         description="The premier conference for visionaries seeking harmony between innovation and wellbeing. Connect with industry leaders, discover breakthrough ideas, and transform your approach to work and life."

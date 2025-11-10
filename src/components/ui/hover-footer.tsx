@@ -8,15 +8,18 @@ export const TextHoverEffect = ({
   text,
   duration,
   className,
+  isHovered,
+  shouldAnimate,
 }: {
   text: string;
   duration?: number;
   automatic?: boolean;
   className?: string;
+  isHovered?: boolean;
+  shouldAnimate?: boolean;
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
-  const [hovered, setHovered] = useState(false);
   const [maskPosition, setMaskPosition] = useState({ cx: "50%", cy: "50%" });
 
   useEffect(() => {
@@ -38,8 +41,6 @@ export const TextHoverEffect = ({
       height="100%"
       viewBox="0 0 300 100"
       xmlns="http://www.w3.org/2000/svg"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       onMouseMove={(e) => setCursor({ x: e.clientX, y: e.clientY })}
       className={cn("select-none uppercase cursor-pointer", className)}
     >
@@ -51,7 +52,7 @@ export const TextHoverEffect = ({
           cy="50%"
           r="25%"
         >
-          {hovered && (
+          {isHovered && (
             <>
               <stop offset="0%" stopColor="#eab308" />
               <stop offset="25%" stopColor="#ef4444" />
@@ -89,8 +90,8 @@ export const TextHoverEffect = ({
         textAnchor="middle"
         dominantBaseline="middle"
         strokeWidth="0.3"
-        className="fill-transparent stroke-neutral-800 font-[helvetica] text-7xl font-bold dark:stroke-neutral-800"
-        style={{ opacity: hovered ? 0.7 : 0 }}
+        className="fill-transparent stroke-balance-400 font-[helvetica] text-7xl font-bold dark:stroke-neutral-800"
+        style={{ opacity: isHovered ? 0.7 : 0 }}
       >
         {text}
       </text>
@@ -103,8 +104,11 @@ export const TextHoverEffect = ({
         className="fill-transparent stroke-[#4D2AA0] font-[helvetica] text-7xl font-bold 
         dark:stroke-[#3ca2fa99]"
         initial={{ strokeDashoffset: 1000, strokeDasharray: 1000 }}
-        animate={{
+        animate={shouldAnimate ? {
           strokeDashoffset: 0,
+          strokeDasharray: 1000,
+        } : {
+          strokeDashoffset: 1000,
           strokeDasharray: 1000,
         }}
         transition={{
@@ -152,8 +156,26 @@ export const HoverFooter = () => {
     { label: "Contact", href: "/contact" },
   ];
 
+  const [isHovered, setIsHovered] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (!hasAnimated) {
+      setHasAnimated(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
   return (
-    <footer className="w-full relative overflow-hidden">
+    <footer 
+      className="w-full relative overflow-hidden"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className="absolute inset-0 bg-[#0A031B] z-0" />
       <FooterBackgroundGradient />
       <div className="max-w-7xl mx-auto p-14 z-40 relative">
@@ -226,14 +248,16 @@ export const HoverFooter = () => {
           </div>
         </div>
 
-        <hr className="border-t border-balance-400/30 my-8" />
-
-
       </div>
 
       {/* Text hover effect */}
       <div className="lg:flex hidden h-[30rem] -mt-48 -mb-40">
-        <TextHoverEffect text="BALANCE" className="z-50" />
+        <TextHoverEffect 
+          text="BALANCE" 
+          className="z-50" 
+          isHovered={isHovered}
+          shouldAnimate={hasAnimated}
+        />
       </div>
     </footer>
   );

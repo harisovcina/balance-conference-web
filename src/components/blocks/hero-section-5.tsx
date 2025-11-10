@@ -41,7 +41,7 @@ function LoopingTextAnimation() {
           alt="Balance Conference Logo"
           width={640}
           height={640}
-          className="h-[640px] w-auto object-contain"
+          className="h-auto md:h-[720px] w-full object-contain"
           priority
         />
       </motion.div>
@@ -53,7 +53,7 @@ function LoopingTextAnimation() {
       key={key}
       text={currentItem.content}
       delay={40}
-      animateBy="words"
+      animateBy="letters"
       direction="top"
       onAnimationComplete={handleAnimationComplete}
       className="text-4xl md:text-6xl font-bold text-white text-center"
@@ -65,9 +65,9 @@ export function HeroSection() {
     return (
         <section style={{ backgroundColor: '#0A031B' }} className="w-full h-screen relative p-8">
             {/* Orb Background */}
-            <div className="absolute inset-0 p-8">
+            <div className="absolute inset-0 p-8 scale-[2] md:scale-100">
                 <Orb
-                    hoverIntensity={0.5}
+                    hoverIntensity={0.1}
                     rotateOnHover={true}
                     hue={0}
                     forceHoverState={false}

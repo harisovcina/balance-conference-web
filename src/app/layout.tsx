@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Cormorant_Garamond } from "next/font/google";
+import { Bodoni_Moda } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 
@@ -19,8 +19,8 @@ const generalSans = localFont({
   display: "swap",
 });
 
-const cormorantGaramond = Cormorant_Garamond({
-  weight: ["300", "400", "500", "600", "700"],
+const bodoniModa = Bodoni_Moda({
+  weight: ["400", "500", "600", "700", "800", "900"],
   style: ["normal", "italic"],
   subsets: ["latin"],
   variable: "--font-serif-display",
@@ -38,8 +38,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${generalSans.variable} ${cormorantGaramond.variable}`}>
-      <body className="font-sans">
+    <html lang="en" className={`${generalSans.variable} ${bodoniModa.variable} overflow-x-hidden`}>
+      <body className="font-sans overflow-x-hidden">
         {children}
         <Toaster />
       </body>
