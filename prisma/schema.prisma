@@ -60,3 +60,71 @@ model VerificationToken {
 }
 
 // Add your custom models below this line
+
+model Speaker {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            String
+  email           String?
+  location        String?
+  image           String?
+  shortDescription String?
+  bio             String?  // JSON array stored as string, parse in application
+  quote           String?
+  motto           String?  // JSON object stored as string, parse in application
+  twitter         String?
+  linkedin        String?
+  instagram       String?
+  website         String?
+  published       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  conferences     ConferenceSpeaker[]
+
+  @@index([slug])
+  @@index([published])
+}
+
+model Conference {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  location        String?  // e.g., "Sarajevo, Bosnia and Herzegovina"
+  date            DateTime?
+  description     String?  // Main description/intro
+  eyebrow         String?  // Small label above title (e.g., "Our latest edition")
+  howTitle        String?  // Section title (e.g., "The result?")
+  howDescription  String?  // Result/outcome description
+  nextChapterText String?  // Call-to-action text
+  participants    Int      @default(0)
+  speakersCount   Int      @default(0)
+  mediaOutlets    Int      @default(0)
+  influencers     Int      @default(0)
+  featured        Boolean  @default(false)
+  published       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  speakers        ConferenceSpeaker[]
+
+  @@index([slug])
+  @@index([published])
+  @@index([featured])
+  @@index([date])
+}
+
+// Join table for many-to-many relationship between Conference and Speaker
+model ConferenceSpeaker {
+  id           String     @id @default(cuid())
+  conferenceId String
+  speakerId    String
+  createdAt    DateTime   @default(now())
+
+  conference   Conference @relation(fields: [conferenceId], references: [id], onDelete: Cascade)
+  speaker      Speaker    @relation(fields: [speakerId], references: [id], onDelete: Cascade)
+
+  @@unique([conferenceId, speakerId])
+  @@index([conferenceId])
+  @@index([speakerId])
+}

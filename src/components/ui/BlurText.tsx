@@ -25,7 +25,7 @@ const BlurText = ({
   animationFrom,
   animationTo,
   easing = t => t,
-  onAnimationComplete,
+  onAnimationComplete = undefined,
   stepDuration = 0.35
 }) => {
   // Group letters by words when animating by letters to prevent word breaking

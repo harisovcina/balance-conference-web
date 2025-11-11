@@ -1,63 +1,87 @@
-'use client'
-
-import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import React from 'react'
+import { redirect } from 'next/navigation'
 import { TopNavigation } from '@/components/blocks/top-navigation'
 import BlurText from '@/components/ui/BlurText'
 import DarkVeil from '@/components/ui/dark-veil'
 import { HoverFooter } from '@/components/ui/hover-footer'
 import GradualBlur from '@/components/ui/gradual-blur'
-import { getSpeakerBySlug, type Speaker } from '@/lib/speakers'
 import { Mail, Linkedin, Instagram } from 'lucide-react'
 import Image from 'next/image'
+import { db } from '@/lib/db'
 
-interface SpeakerPageProps {
-  params: Promise<{
-    slug: string
-  }> | {
-    slug: string
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
+type Motto = { label: string; highlight: string; description: string }
+
+function safeParseArray(value?: string | null): string[] {
+  if (!value) return []
+  try {
+    const parsed = JSON.parse(value)
+    return Array.isArray(parsed) ? parsed.map(String) : []
+  } catch {
+    // If JSON parsing fails, treat as plain text and split by newlines or return as single paragraph
+    return [String(value)]
   }
 }
 
-export default function SpeakerPage({ params }: SpeakerPageProps) {
-  const router = useRouter()
-  const [slug, setSlug] = useState<string | null>(null)
-  const [speaker, setSpeaker] = useState<Speaker | null>(null)
-
-  useEffect(() => {
-    async function loadSpeaker() {
-      let resolvedSlug: string
-      
-      if (params && typeof params === 'object' && 'then' in params) {
-        // params is a Promise (Next.js 15+)
-        const resolvedParams = await params
-        resolvedSlug = resolvedParams.slug
-      } else if (params && typeof params === 'object' && 'slug' in params) {
-        // params is already resolved
-        resolvedSlug = params.slug
-      } else {
-        return
-      }
-
-      setSlug(resolvedSlug)
-      const foundSpeaker = getSpeakerBySlug(resolvedSlug)
-      setSpeaker(foundSpeaker || null)
-
-      if (!foundSpeaker) {
-        router.push('/speakers')
+function safeParseMotto(value?: string | null): Motto | null {
+  if (!value) return null
+  try {
+    const parsed = JSON.parse(value)
+    if (parsed && typeof parsed === 'object') {
+      return {
+        label: String(parsed.label ?? ''),
+        highlight: String(parsed.highlight ?? ''),
+        description: String(parsed.description ?? ''),
       }
     }
-    
-    loadSpeaker()
-  }, [params, router])
-
-  if (!slug || !speaker) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-white">Loading...</div>
-      </div>
-    )
+    return null
+  } catch {
+    return null
   }
+}
+
+export default async function SpeakerPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const { slug: rawSlug } = await params
+  const slug = rawSlug ? decodeURIComponent(rawSlug) : ''
+
+  if (!slug) {
+    redirect('/speakers')
+  }
+
+  let record = await (db as any).speaker.findUnique({
+    where: { slug: String(slug) },
+  })
+
+  // Fallback: handle URLs without dashes or with different separators
+  if (!record) {
+    const inputKey = String(slug).toLowerCase().replace(/[^a-z0-9]/g, '')
+    const candidates = await (db as any).speaker.findMany({
+      select: { slug: true },
+    })
+    const matched = candidates.find(
+      (c: any) => String(c.slug).toLowerCase().replace(/[^a-z0-9]/g, '') === inputKey
+    )
+    if (matched?.slug) {
+      record = await (db as any).speaker.findUnique({
+        where: { slug: matched.slug },
+      })
+    }
+  }
+
+  if (!record) {
+    redirect('/speakers')
+  }
+
+  const bio = safeParseArray(record.bio as string | undefined)
+  const motto = safeParseMotto(record.motto as string | undefined)
+
+  const emailLink = record.email ? `mailto:${record.email}` : undefined
 
   return (
     <>
@@ -98,8 +122,8 @@ export default function SpeakerPage({ params }: SpeakerPageProps) {
             <div className="lg:col-span-3">
               <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden border border-balance-300/20">
                 <Image
-                  src={speaker.image}
-                  alt={speaker.name}
+                  src={record.image || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&h=1200&fit=crop'}
+                  alt={record.name}
                   fill
                   className="object-cover"
                   priority
@@ -113,29 +137,29 @@ export default function SpeakerPage({ params }: SpeakerPageProps) {
                 Sarajevo Conference 2025 Speaker
               </h6>
               <h1 className="text-5xl md:text-6xl font-bold text-white">
-                {speaker.name}
+                {record.name}
               </h1>
               <p className="text-xl md:text-2xl text-white">
-                {speaker.location}
+                {record.location ?? ''}
               </p>
               <p className="text-lg md:text-xl text-balance-100 max-w-2xl">
-                {speaker.shortDescription}
+                {record.shortDescription ?? ''}
               </p>
               
               {/* Social Media Icons */}
               <div className="flex items-center gap-4 pt-4">
-                {speaker.social.email && (
+                {emailLink && (
                   <a
-                    href={speaker.social.email}
+                    href={emailLink}
                     className="w-10 h-10 rounded-full border border-balance-300/30 flex items-center justify-center text-white hover:bg-balance-300/20 transition-colors"
                     aria-label="Email"
                   >
                     <Mail className="w-5 h-5" />
                   </a>
                 )}
-                {speaker.social.linkedin && (
+                {record.linkedin && (
                   <a
-                    href={speaker.social.linkedin}
+                    href={record.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-10 h-10 rounded-full border border-balance-300/30 flex items-center justify-center text-white hover:bg-balance-300/20 transition-colors"
@@ -144,9 +168,9 @@ export default function SpeakerPage({ params }: SpeakerPageProps) {
                     <Linkedin className="w-5 h-5" />
                   </a>
                 )}
-                {speaker.social.instagram && (
+                {record.instagram && (
                   <a
-                    href={speaker.social.instagram}
+                    href={record.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-10 h-10 rounded-full border border-balance-300/30 flex items-center justify-center text-white hover:bg-balance-300/20 transition-colors"
@@ -170,12 +194,15 @@ export default function SpeakerPage({ params }: SpeakerPageProps) {
           <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 lg:gap-12">
             {/* Left: Quote (30%) */}
             <div className="lg:col-span-3 flex items-start">
-              {speaker.quote ? (
+              {record.quote ? (
                 <BlurText
-                  text={speaker.quote}
+                  segments={[{ text: record.quote }]}
                   delay={40}
                   animateBy="words"
                   direction="top"
+                  animationFrom={{ filter: 'blur(10px)', opacity: 0, y: -50 } as any}
+                  animationTo={[{ filter: 'blur(5px)', opacity: 0.5, y: 5 }, { filter: 'blur(0px)', opacity: 1, y: 0 }] as any}
+                  onAnimationComplete={undefined}
                   className="text-4xl md:text-5xl italic font-serif-display text-white leading-tight"
                 />
               ) : (
@@ -187,28 +214,35 @@ export default function SpeakerPage({ params }: SpeakerPageProps) {
             <div className="lg:col-span-7 space-y-8">
               {/* Biography */}
               <div className="space-y-4">
-                {speaker.bio.map((paragraph, index) => (
-                  <p key={index} className="text-lg text-balance-100 leading-relaxed">
-                    {paragraph}
-                  </p>
-                ))}
+                {bio.length > 0 ? (
+                  bio.map((paragraph, index) => (
+                    <p key={index} className="text-lg text-balance-100 leading-relaxed">
+                      {paragraph}
+                    </p>
+                  ))
+                ) : (
+                  <p className="text-lg text-balance-200 italic">No biography available.</p>
+                )}
               </div>
 
               {/* Motto Section */}
-              {speaker.motto && (
+              {motto && (
                 <div className="pt-8 space-y-4">
                   <p className="text-lg md:text-2xl text-balance-100">
-                    {speaker.motto.label}
+                    {motto.label}
                   </p>
                   <BlurText
-                    text={speaker.motto.highlight}
+                    segments={[{ text: motto.highlight }]}
                     delay={40}
                     animateBy="letters"
                     direction="top"
+                    animationFrom={{ filter: 'blur(10px)', opacity: 0, y: -50 } as any}
+                    animationTo={[{ filter: 'blur(5px)', opacity: 0.5, y: 5 }, { filter: 'blur(0px)', opacity: 1, y: 0 }] as any}
+                    onAnimationComplete={undefined}
                     className="text-5xl italic font-serif-display md:text-5xl font-bold text-accent-gold "
                   />
                   <p className="text-lg md:text-xl text-balance-100 ">
-                    {speaker.motto.description}
+                    {motto.description}
                   </p>
                 </div>
               )}

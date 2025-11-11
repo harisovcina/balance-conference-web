@@ -1,22 +1,29 @@
-'use client'
-
 import React from 'react'
 import { TopNavigation } from '@/components/blocks/top-navigation'
 import DarkVeil from '@/components/ui/dark-veil'
 import { HoverFooter } from '@/components/ui/hover-footer'
 import GradualBlur from '@/components/ui/gradual-blur'
 import { TeamSection, type TeamMember } from '@/components/ui/team'
-import { speakers as speakerData } from '@/lib/speakers'
+import { db } from '@/lib/db'
 
-// Convert speaker data to TeamMember format with slugs
-const speakers: TeamMember[] = speakerData.map((speaker) => ({
-  name: speaker.name,
-  role: speaker.shortDescription,
-  avatar: speaker.image,
-  slug: speaker.slug,
-}))
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
-export default function SpeakersPage() {
+async function getSpeakers(): Promise<TeamMember[]> {
+  const records = await (db as any).speaker.findMany({
+    where: { published: true },
+    orderBy: { createdAt: 'desc' },
+  })
+  return (records as any[]).map((s: any) => ({
+    name: s.name,
+    role: s.shortDescription ?? '',
+    avatar: s.image ?? '',
+    slug: s.slug,
+  }))
+}
+
+export default async function SpeakersPage() {
+  const speakers = await getSpeakers()
   return (
     <>
       {/* GradualBlur effect for entire page */}
