@@ -42,7 +42,7 @@ export const TextHoverEffect = ({
       viewBox="0 0 300 100"
       xmlns="http://www.w3.org/2000/svg"
       onMouseMove={(e) => setCursor({ x: e.clientX, y: e.clientY })}
-      className={cn("select-none uppercase cursor-pointer", className)}
+      className={cn("select-none uppercase pointer-events-auto", className)}
     >
       <defs>
         <linearGradient
@@ -178,7 +178,7 @@ export const HoverFooter = () => {
     >
       <div className="absolute inset-0 bg-[#0A031B] z-0" />
       <FooterBackgroundGradient />
-      <div className="max-w-7xl mx-auto py-14 px-12 z-40 relative">
+      <div className="max-w-7xl mx-auto py-14 px-12 z-[60] relative">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-12">
           {/* Brand section */}
           <div className="flex flex-col space-y-4">
@@ -251,7 +251,7 @@ export const HoverFooter = () => {
       </div>
 
       {/* Text hover effect */}
-      <div className="lg:flex hidden h-[30rem] -mt-48 -mb-40">
+      <div className="lg:flex hidden h-[30rem] -mt-48 -mb-40 pointer-events-none">
         <TextHoverEffect 
           text="BALANCE" 
           className="z-50" 

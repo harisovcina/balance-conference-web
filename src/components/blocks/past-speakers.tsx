@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { InfiniteSlider } from '@/components/ui/infinite-slider'
 import { ProgressiveBlur } from '@/components/ui/progressive-blur'
@@ -13,20 +13,35 @@ type Speaker = {
   description: string
 }
 
-const speakers: Speaker[] = [
-  { name: 'Marija Sinanović', slug: 'marija-sinanovic', description: 'Entrepreneur & Leadership Coach', image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&h=1066&fit=crop' },
-  { name: 'Akan Abdula', slug: 'akan-abdula', description: 'Brand Strategist & Author', image: 'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=800&h=1066&fit=crop' },
-  { name: 'Dr. Bilgin Sait', slug: 'dr-bilgin-sait', description: 'Neuroscientist & Educator', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&h=1066&fit=crop' },
-  { name: 'Prof. dr. Maja Volk', slug: 'prof-dr-maja-volk', description: 'Nutritionist & Wellness Expert', image: 'https://images.unsplash.com/photo-1544006659-f0b21884ce1d?w=800&h=1066&fit=crop' },
-  { name: 'Anya Patel', slug: 'anya-patel', description: 'Mindfulness Teacher', image: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=800&h=1066&fit=crop' },
-  { name: 'David Chen', slug: 'david-chen', description: 'Organizational Psychologist', image: 'https://images.unsplash.com/photo-1566753323558-f4e0952af115?w=800&h=1066&fit=crop' },
-]
-
 export function PastSpeakers() {
+  const [speakers, setSpeakers] = useState<Speaker[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/speakers')
+      .then(res => res.json())
+      .then(data => {
+        if (data.speakers) {
+          const formattedSpeakers: Speaker[] = data.speakers
+            .filter((speaker: any) => speaker.published)
+            .map((speaker: any) => ({
+              name: speaker.name,
+              slug: speaker.slug,
+              description: speaker.shortDescription || speaker.location || '',
+              // Use the image as-is from database (it's already a full URL or path)
+              image: speaker.image || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&h=1066&fit=crop',
+            }))
+          setSpeakers(formattedSpeakers)
+          console.log('Loaded past speakers:', formattedSpeakers)
+        }
+      })
+      .catch(err => console.error('Error fetching speakers:', err))
+      .finally(() => setLoading(false))
+  }, [])
   return (
     <section className="bg-background py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
-        <div className="mb-10 flex items-end justify-between gap-6">
+        <div className="mb-10 flex items-start justify-between gap-6">
           <div>
             <h2 className="text-4xl font-bold tracking-tight md:text-5xl">Past Speakers</h2>
             <p className="text-muted-foreground mt-3 max-w-2xl text-sm md:text-base">
@@ -35,16 +50,23 @@ export function PastSpeakers() {
               of a balanced life.
             </p>
           </div>
-          <Link href="/speakers" className="group hidden items-center gap-2 text-sm font-medium md:inline-flex">
-            <span>See All Speakers</span>
-            <ChevronRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-          </Link>
+          <Button asChild variant="link" className="hidden md:inline-flex">
+            <Link href="/speakers" className="flex items-center gap-2">
+              <span>See All Speakers</span>
+              <ChevronRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </Button>
         </div>
 
         <div className="relative -mr-12 lg:-mr-96">
-          <div className="overflow-hidden rounded-4xl p-2 md:p-3">
-            <InfiniteSlider gap={24} duration={60} durationOnHover={100000}>
-              {speakers.map((speaker, idx) => (
+          {loading ? (
+            <div className="text-center py-20 text-muted-foreground">Loading speakers...</div>
+          ) : speakers.length === 0 ? (
+            <div className="text-center py-20 text-muted-foreground">No speakers available yet</div>
+          ) : (
+            <div className="overflow-hidden rounded-4xl p-2 md:p-3">
+              <InfiniteSlider gap={24} duration={60} durationOnHover={100000}>
+                {speakers.map((speaker, idx) => (
                 <Link
                   key={idx}
                   href={`/speakers/${speaker.slug}`}
@@ -70,20 +92,25 @@ export function PastSpeakers() {
                     </figcaption>
                   </figure>
                 </Link>
-              ))}
-            </InfiniteSlider>
-          </div>
+                ))}
+              </InfiniteSlider>
+            </div>
+          )}
 
-          <ProgressiveBlur
-            className="pointer-events-none absolute left-0 top-0 h-full w-24 md:w-32"
-            direction="left"
-            blurIntensity={1}
-          />
-          <ProgressiveBlur
-            className="pointer-events-none absolute right-0 top-0 h-full w-48 md:w-64 lg:w-80"
-            direction="right"
-            blurIntensity={1}
-          />
+          {!loading && speakers.length > 0 && (
+            <>
+              <ProgressiveBlur
+                className="pointer-events-none absolute left-0 top-0 h-full w-24 md:w-32"
+                direction="left"
+                blurIntensity={1}
+              />
+              <ProgressiveBlur
+                className="pointer-events-none absolute right-0 top-0 h-full w-48 md:w-64 lg:w-80"
+                direction="right"
+                blurIntensity={1}
+              />
+            </>
+          )}
         </div>
         <div className="mt-6 flex justify-center md:hidden">
           <Button asChild size="lg" className="rounded-full px-6">

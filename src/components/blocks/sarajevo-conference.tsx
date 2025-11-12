@@ -49,7 +49,7 @@ export default function SarajevoConference({
             <h6 className="text-xs font-medium uppercase tracking-[0.06em] text-primary">
               {eyebrow}
             </h6>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-balance-300">
+            <h2 className="text-5xl leading-none md:text-5xl lg:text-6xl font-extrabold text-balance-300">
               {title}
             </h2>
             <p className="text-base md:text-lg leading-relaxed text-muted-foreground">

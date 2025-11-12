@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { TopNavigation } from '@/components/blocks/top-navigation'
 import BlurText from '@/components/ui/BlurText'
 import DarkVeil from '@/components/ui/dark-veil'
@@ -11,9 +11,10 @@ import { TestimonialsColumn, type Testimonial as TestimonialColumnType } from '@
 import { ByTheNumbers } from '@/components/blocks/by-the-numbers'
 import { BlogSection } from '@/components/ui/blog-section'
 import { motion } from 'motion/react'
-import { testimonials, type Testimonial } from '@/components/ui/testimonials'
+import type { Testimonial } from '@/components/ui/testimonials'
 
-const testimonialsColumns: TestimonialColumnType[] = [
+// Attendee testimonials for the columns section
+const attendeeTestimonials: TestimonialColumnType[] = [
   {
     text: "Balance Conference 2025 was a transformative experience. The thoughtful curation of speakers and workshops created a space where I could truly explore what balance means in my own life.",
     image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=400&fit=crop',
@@ -70,11 +71,33 @@ const testimonialsColumns: TestimonialColumnType[] = [
   },
 ]
 
-const firstColumn = testimonialsColumns.slice(0, 3)
-const secondColumn = testimonialsColumns.slice(3, 6)
-const thirdColumn = testimonialsColumns.slice(6, 9)
+const firstColumn = attendeeTestimonials.slice(0, 3)
+const secondColumn = attendeeTestimonials.slice(3, 6)
+const thirdColumn = attendeeTestimonials.slice(6, 9)
 
 export default function ConferencesPage() {
+  const [speakers, setSpeakers] = useState<Testimonial[]>([])
+  const [loadingSpeakers, setLoadingSpeakers] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/speakers')
+      .then(res => res.json())
+      .then(data => {
+        if (data.speakers) {
+          const speakerTestimonials: Testimonial[] = data.speakers
+            .filter((speaker: any) => speaker.published && speaker.quote)
+            .map((speaker: any) => ({
+              name: speaker.name,
+              designation: speaker.shortDescription || speaker.location || 'Speaker',
+              quote: speaker.quote || '',
+              src: speaker.image || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&h=1066&fit=crop',
+            }))
+          setSpeakers(speakerTestimonials)
+        }
+      })
+      .catch(err => console.error('Error fetching speakers:', err))
+      .finally(() => setLoadingSpeakers(false))
+  }, [])
   return (
     <>
       {/* GradualBlur effect for entire page */}
@@ -199,24 +222,47 @@ export default function ConferencesPage() {
 
       {/* Speakers Testimonials Section */}
       <section className="relative z-10 py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 80 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          viewport={{ once: true }}
+          className="flex flex-col items-start justify-center max-w-6xl mx-auto mb-10 px-12 lg:px-16 xl:px-0"
+        >
+          <div className="flex justify-center">
+            <div className="border border-balance-200/30 py-1 px-4 rounded-lg text-balance-100 text-sm">Testimonials</div>
+          </div>
+          <h2 className="text-5xl sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tighter mt-5 text-white text-left">
+            What our Speakers say
+          </h2>
+          <p className="text-left mt-5 opacity-75 text-balance-100">
+            See what our speakers have to say about Balance Conference.
+          </p>
+        </motion.div>
         <div className="mx-auto max-w-8xl px-6 lg:px-12 flex items-center justify-center">
-          <CircularTestimonials
-            testimonials={testimonials}
-            autoplay={true}
-            colors={{
-              name: "#f7f7ff",
-              designation: "#e1e1e1",
-              testimony: "#f1f1f7",
-              arrowBackground: "#141414",
-              arrowForeground: "#f1f1f7",
-              arrowHoverBackground: "#4D2AA0",
-            }}
-            fontSizes={{
-              name: "3rem",
-              designation: "1rem",
-              quote: "1.125rem",
-            }}
-          />
+          {loadingSpeakers ? (
+            <div className="text-white text-center py-20">Loading speakers...</div>
+          ) : speakers.length > 0 ? (
+            <CircularTestimonials
+              testimonials={speakers}
+              autoplay={true}
+              colors={{
+                name: "#f7f7ff",
+                designation: "#e1e1e1",
+                testimony: "#f1f1f7",
+                arrowBackground: "#141414",
+                arrowForeground: "#f1f1f7",
+                arrowHoverBackground: "#4D2AA0",
+              }}
+              fontSizes={{
+                name: "3rem",
+                designation: "1rem",
+                quote: "1.125rem",
+              }}
+            />
+          ) : (
+            <div className="text-white border border-dotted border-balance-200/30 rounded-lg text-center py-20">No speakers available yet</div>
+          )}
         </div>
       </section>
 
@@ -236,10 +282,10 @@ export default function ConferencesPage() {
             <div className="flex justify-center">
               <div className="border border-balance-200/30 py-1 px-4 rounded-lg text-balance-100 text-sm">Testimonials</div>
             </div>
-            <h2 className="text-5xl sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tighter mt-5 text-white text-center">
+            <h2 className="text-5xl sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tighter mt-5 text-white text-left">
               What our attendees say
             </h2>
-            <p className="text-center mt-5 opacity-75 text-balance-100">
+            <p className="text-left mt-5 opacity-75 text-balance-100">
               See what our participants have to say about Balance Conference.
             </p>
           </motion.div>

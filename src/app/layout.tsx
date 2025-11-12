@@ -29,7 +29,7 @@ const bodoniModa = Bodoni_Moda({
 
 export const metadata: Metadata = {
   title: "Balance Conference 2026",
-  description: "The premier conference for visionaries seeking harmony between innovation and wellbeing.",
+  description: "Join a community redefining what it means to live well, inside and out. Reconnect with yourself, others, and what truly matters.",
 };
 
 export default function RootLayout({

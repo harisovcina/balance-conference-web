@@ -1,18 +1,23 @@
 import React from 'react'
+import dynamicImport from 'next/dynamic'
 import { TopNavigation } from '@/components/blocks/top-navigation'
-import BlurText from '@/components/ui/BlurText'
-import DarkVeil from '@/components/ui/dark-veil'
-import { HoverFooter } from '@/components/ui/hover-footer'
-import GradualBlur from '@/components/ui/gradual-blur'
-import { TracingBeam } from '@/components/ui/tracing-beam'
 import { Button } from '@/components/ui/button'
-import { CircularTestimonials } from '@/components/ui/circular-testimonials'
-import { TestimonialsColumn, type Testimonial as TestimonialColumnType } from '@/components/ui/testimonials-columns-1'
-import { BlogSection } from '@/components/ui/blog-section'
-import { AnimatedSection } from '@/components/blocks/about-page-client'
 import { Mail } from 'lucide-react'
 import Image from 'next/image'
 import { db } from '@/lib/db'
+
+// Lazy load heavy animation and WebGL components
+const DarkVeil = dynamicImport(() => import('@/components/ui/dark-veil'))
+const GradualBlur = dynamicImport(() => import('@/components/ui/gradual-blur'))
+const BlurText = dynamicImport(() => import('@/components/ui/BlurText'))
+const TracingBeam = dynamicImport(() => import('@/components/ui/tracing-beam').then(mod => ({ default: mod.TracingBeam })))
+const CircularTestimonials = dynamicImport(() => import('@/components/ui/circular-testimonials').then(mod => ({ default: mod.CircularTestimonials })))
+const TestimonialsColumn = dynamicImport(() => import('@/components/ui/testimonials-columns-1').then(mod => ({ default: mod.TestimonialsColumn })))
+const BlogSection = dynamicImport(() => import('@/components/ui/blog-section').then(mod => ({ default: mod.BlogSection })))
+const AnimatedSection = dynamicImport(() => import('@/components/blocks/about-page-client').then(mod => ({ default: mod.AnimatedSection })))
+const HoverFooter = dynamicImport(() => import('@/components/ui/hover-footer').then(mod => ({ default: mod.HoverFooter })))
+
+import type { Testimonial as TestimonialColumnType } from '@/components/ui/testimonials-columns-1'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -148,10 +153,10 @@ export default async function AboutPage() {
 
       {/* Content Section with Tracing Beam */}
       <section className="w-full relative z-10">
-        <TracingBeam className="px-4 sm:px-6 -ml-4 lg:ml-48" beamStartOffset="top-72">
-          <div className="mx-auto lg:ml-48 lg:mr-auto max-w-4xl antialiased pt-4 relative pl-8 sm:pl-12 lg:pl-0">
+        <TracingBeam className="px-4 sm:px-6 -ml-4 md:ml-24 xl:ml-48" beamStartOffset="top-72">
+          <div className="mx-auto xl:ml-48 lg:mr-auto max-w-4xl antialiased pt-4 relative pl-8 sm:pl-12 lg:pl-0">
             {/* First paragraph - full width */}
-            <div className="flex items-center py-24 sm:py-32 md:py-64">
+            <div className="flex items-center py-64 px-6">
               <div className="w-full max-w-4xl">
                 <BlurText
                   segments={[
@@ -163,14 +168,14 @@ export default async function AboutPage() {
                   direction="top"
                   animationFrom={{ filter: 'blur(10px)', opacity: 0, y: -50 } as any}
                   animationTo={[{ filter: 'blur(5px)', opacity: 0.5, y: 5 }, { filter: 'blur(0px)', opacity: 1, y: 0 }] as any}
-                  className="text-xl sm:text-2xl md:text-3xl font-semibold text-balance-100 leading-[1.25] break-words hyphens-auto"
+                  className="text-3xl font-semibold text-balance-100 md:text-3xl leading-[1.25] break-words hyphens-auto"
                 />
               </div>
             </div>
 
             {/* Quote Section */}
-            <div className="min-h-[70vh] sm:min-h-[80vh] md:min-h-screen flex items-center py-24 sm:py-32 md:py-64">
-              <div className="w-full max-w-4xl space-y-6 sm:space-y-8">
+            <div className="min-h-screen flex items-center py-64 px-6">
+              <div className="w-full max-w-4xl lg:max-w-3xl xl:max-w-5sxl space-y-6 sm:space-y-8">
                 <BlurText
                   segments={[
                     {
@@ -196,9 +201,9 @@ export default async function AboutPage() {
                   direction="top"
                   animationFrom={{ filter: 'blur(10px)', opacity: 0, y: -50 } as any}
                   animationTo={[{ filter: 'blur(5px)', opacity: 0.5, y: 5 }, { filter: 'blur(0px)', opacity: 1, y: 0 }] as any}
-                  className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-thin italic text-balance-100 font-serif-display leading-[1.25] break-words hyphens-auto"
+                  className="text-4xl md:text-5xl tracking-tight font-thin italic text-balance-100 text-left font-serif-display"
                 />
-                <div className="space-y-1 sm:space-y-2">
+                <div className="space-y-2">
                   <BlurText
                     segments={[{ text: "Ejub Kučuk" }]}
                     delay={40}
@@ -206,7 +211,7 @@ export default async function AboutPage() {
                     direction="top"
                     animationFrom={{ filter: 'blur(10px)', opacity: 0, y: -20 } as any}
                     animationTo={[{ filter: 'blur(5px)', opacity: 0.5, y: 5 }, { filter: 'blur(0px)', opacity: 1, y: 0 }] as any}
-                    className="text-lg sm:text-xl md:text-2xl font-semibold text-white"
+                    className="text-2xl font-semibold text-white"
                   />
                   <BlurText
                     segments={[{ text: "'Find Your Balance' Founder & CEO" }]}
@@ -215,23 +220,23 @@ export default async function AboutPage() {
                     direction="top"
                     animationFrom={{ filter: 'blur(10px)', opacity: 0, y: -20 } as any}
                     animationTo={[{ filter: 'blur(5px)', opacity: 0.5, y: 5 }, { filter: 'blur(0px)', opacity: 1, y: 0 }] as any}
-                    className="text-sm sm:text-base md:text-lg text-balance-200"
+                    className="text-lg text-balance-200"
                   />
                 </div>
               </div>
             </div>
 
             {/* Why It Matters Section */}
-            <div className="min-h-[70vh] sm:min-h-[80vh] lg:min-h-screen flex items-center py-24 sm:py-32 lg:py-64">
-              <div className="w-full max-w-6xl mx-auto">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 xl:gap-16 items-center">
+            <div className="min-h-screen flex items-center py-64 px-6">
+              <div className="w-full mx-auto max-w-xl lg:max-w-2xl mx-0 xl:max-w-6xl">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 xl:gap-16 items-center">
                   {/* Left Side - Content */}
-                  <div className="space-y-6 sm:space-y-8">
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white">
+                  <div className="space-y-8">
+                    <h2 className="text-5xl sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white">
                       Why It Matters?
                     </h2>
                     
-                    <div className="space-y-4 sm:space-y-6 text-balance-100 text-base sm:text-lg leading-relaxed">
+                    <div className="space-y-6 text-balance-100 text-lg leading-relaxed">
                       <p>
                         Traditional systems don't always give us space to talk about mental health, stress, or personal growth. Hospitals treat symptoms. Workplaces demand performance. But who's teaching us how to actually manage the pressure?
                       </p>
@@ -242,19 +247,19 @@ export default async function AboutPage() {
 
                     <Button 
                       size="lg" 
-                      className="bg-balance-300 hover:bg-balance-400 text-white rounded-xl w-full sm:w-auto text-sm sm:text-base"
+                      className="bg-balance-300 hover:bg-balance-400 text-white rounded-xl w-full sm:w-auto"
                     >
-                      <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                      <Mail className="w-5 h-5 mr-2" />
                       <span className="hidden sm:inline">Join as an Expert! Drop Us an Email</span>
                       <span className="sm:hidden">Join as Expert</span>
                     </Button>
                   </div>
 
                   {/* Right Side - Image Grid */}
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-8 lg:mt-0">
+                  <div className="grid grid-cols-2 gap-4 mt-12 xl:mt-0">
                     {/* Top Left Image */}
                     <div className="col-span-1">
-                      <div className="relative aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden">
+                      <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
                         <Image
                           src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=600&fit=crop"
                           alt="Community gathering"
@@ -265,7 +270,7 @@ export default async function AboutPage() {
                     </div>
                     {/* Top Right Image */}
                     <div className="col-span-1">
-                      <div className="relative aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden">
+                      <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
                         <Image
                           src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop"
                           alt="Conference networking"
@@ -277,7 +282,7 @@ export default async function AboutPage() {
 
                     {/* Bottom Left Image */}
                     <div className="col-span-1">
-                      <div className="relative aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden">
+                      <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
                         <Image
                           src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800&h=600&fit=crop"
                           alt="Conference bags"
@@ -289,7 +294,7 @@ export default async function AboutPage() {
 
                     {/* Bottom Right Image */}
                     <div className="col-span-1">
-                      <div className="relative aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden">
+                      <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
                         <Image
                           src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&h=600&fit=crop"
                           alt="Conference attendees"
@@ -306,19 +311,19 @@ export default async function AboutPage() {
         </TracingBeam>
       </section>
 
-      <section className="relative z-10 py-24">
-      <AnimatedSection className="flex flex-col items-start justify-center max-w-5xl mx-auto mb-10">
+      <section className="relative z-10 py-16">
+      <AnimatedSection className="flex flex-col items-start justify-center max-w-6xl mx-auto mb-10 px-12 lg:px-16 xl:px-0">
             <div className="flex justify-center">
               <div className="border border-balance-200/30 py-1 px-4 rounded-lg text-balance-100 text-sm">Testimonials</div>
             </div>
-            <h2 className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-5xl font-bold tracking-tighter mt-5 text-white text-center">
+            <h2 className="text-5xl sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tighter mt-5 text-white text-left">
               What our Speakers say
             </h2>
-            <p className="text-center mt-5 opacity-75 text-balance-100">
+            <p className="text-left mt-5 opacity-75 text-balance-100">
               See what our speakers have to say about Balance Conference.
             </p>
           </AnimatedSection>
-        <div className="mx-auto max-w-5xl px-6 lg:px-12 flex items-center justify-center">
+        <div className="mx-auto max-w-8xl px-6 lg:px-12 flex items-center justify-center">
           <CircularTestimonials
             testimonials={speakerTestimonials}
             autoplay={true}
@@ -341,15 +346,15 @@ export default async function AboutPage() {
 
  {/* Attendees Testimonials Columns Section */}
  <section className="relative z-10 py-16" style={{ backgroundColor: 'rgba(10, 3, 27, 0.5)', backdropFilter: 'blur(12px)' }}>
-        <div className="container z-10 mx-auto max-w-5xl">
+        <div className="container z-10 mx-auto max-w-7xl px-12 lg:px-16">
           <AnimatedSection className="flex flex-col items-start justify-center mx-auto mb-10">
             <div className="flex justify-center">
               <div className="border border-balance-200/30 py-1 px-4 rounded-lg text-balance-100 text-sm">Testimonials</div>
             </div>
-            <h2 className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-5xl font-bold tracking-tighter mt-5 text-white text-center">
+            <h2 className="text-5xl sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tighter mt-5 text-white text-left">
               What our attendees say
             </h2>
-            <p className="text-center mt-5 opacity-75 text-balance-100">
+            <p className="text-left mt-5 opacity-75 text-balance-100">
               See what our participants have to say about Balance Conference.
             </p>
           </AnimatedSection>
@@ -363,7 +368,7 @@ export default async function AboutPage() {
       </section>
       
       {/* Latest Insights Section */}
-      <section className="relative max-w-5xl mx-auto z-10 py-16">
+      <section className="relative max-w-6xl mx-auto z-10 py-16 px-6 md:px-4 lg:px-12 xl:px-0">
         <BlogSection
           heading="Related Reading"
           description="Deepen your understanding with articles on balance, mindfulness, and personal development."

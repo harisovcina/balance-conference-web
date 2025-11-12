@@ -55,7 +55,7 @@ export default function SpeakersPage() {
       const res = await fetch('/api/speakers')
       if (res.ok) {
         const data = await res.json()
-        setSpeakers(data)
+        setSpeakers(data.speakers || [])
       }
     } catch (error) {
       console.error('Error fetching speakers:', error)

@@ -145,19 +145,21 @@ export const CircularTestimonials = ({
     if (isLeft) {
       return {
         zIndex: 2,
-        opacity: .9,
+        opacity: .99,
         pointerEvents: "auto",
         transform: `translateX(-${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(5deg)`,
         transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
+        filter: "blur(4px)",
       };
     }
     if (isRight) {
       return {
         zIndex: 2,
-        opacity: .9,
+        opacity: .99,
         pointerEvents: "auto",
         transform: `translateX(${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(-5deg)`,
         transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
+        filter: "blur(4px)",
       };
     }
     // Hide all other images
@@ -208,7 +210,7 @@ export const CircularTestimonials = ({
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
               <h2
-                className="font-bold mb-1"
+                className="font-bold mb-1 leading-tight"
                 style={{ color: colorName, fontSize: fontSizeName }}
               >
                 {activeTestimonial.name}
@@ -279,7 +281,7 @@ export const CircularTestimonials = ({
           </AnimatePresence>
           <div className="flex gap-6 pt-12 md:pt-4">
             <button
-              className="w-[4rem] h-[4rem] rounded-full flex items-center justify-center cursor-pointer transition-colors border border-balance-400"
+              className="w-[4rem] h-[4rem] rounded-full flex items-center justify-center cursor-pointer transition-colors"
               onClick={handlePrev}
               style={{
                 backgroundColor: hoverPrev ? colorArrowHoverBg : colorArrowBg,
@@ -291,7 +293,7 @@ export const CircularTestimonials = ({
               <ChevronLeft size={24} color={colorArrowFg} />
             </button>
             <button
-              className="w-[4rem] h-[4rem] rounded-full flex items-center justify-center cursor-pointer transition-colors border-border"
+              className="w-[4rem] h-[4rem] rounded-full flex items-center justify-center cursor-pointer transition-colors"
               onClick={handleNext}
               style={{
                 backgroundColor: hoverNext ? colorArrowHoverBg : colorArrowBg,

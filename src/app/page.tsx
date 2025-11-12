@@ -1,11 +1,17 @@
+import dynamic from 'next/dynamic';
 import { TopNavigation } from "@/components/blocks/top-navigation";
 import { HeroSection } from "@/components/blocks/hero-section-5";
-import { AnimatedMarqueeHero } from "@/components/ui/hero-3";
-import SarajevoConference from "@/components/blocks/sarajevo-conference";
-import { PastSpeakers } from "@/components/blocks/past-speakers";
-import { BlogSection } from "@/components/ui/blog-section";
-import { HoverFooter } from "@/components/ui/hover-footer";
-import GradualBlur from "@/components/ui/gradual-blur";
+
+// Lazy load below-the-fold components
+const GradualBlur = dynamic(() => import("@/components/ui/gradual-blur"));
+const AnimatedMarqueeHero = dynamic(() => import("@/components/ui/hero-3").then(mod => ({ default: mod.AnimatedMarqueeHero })), {
+  loading: () => <div className="h-screen" />,
+});
+const SarajevoConference = dynamic(() => import("@/components/blocks/sarajevo-conference"));
+const PastSpeakers = dynamic(() => import("@/components/blocks/past-speakers").then(mod => ({ default: mod.PastSpeakers })));
+const ShareExpertise = dynamic(() => import("@/components/blocks/share-expertise"));
+const BlogSection = dynamic(() => import("@/components/ui/blog-section").then(mod => ({ default: mod.BlogSection })));
+const HoverFooter = dynamic(() => import("@/components/ui/hover-footer").then(mod => ({ default: mod.HoverFooter })));
 
 const CONFERENCE_IMAGES = [
   "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=900&auto=format&fit=crop&q=60",
@@ -43,12 +49,13 @@ export default function Home() {
             Begin <span className="text-accent-magenta">Again.</span>
           </>
         }
-        description="The premier conference for visionaries seeking harmony between innovation and wellbeing. Connect with industry leaders, discover breakthrough ideas, and transform your approach to work and life."
-        ctaText="Check Out What Happened Last Year"
-        ctaLink="/conferences"
+        description="Join a community redefining what it means to live well, inside and out. Reconnect with yourself, others, and what truly matters."
+        ctaText="See How We Do It"
+        ctaLink="/about"
         images={CONFERENCE_IMAGES}
       />
       <SarajevoConference />
+      <ShareExpertise />
       <PastSpeakers />
       
       {/* Latest Insights Section */}

@@ -4,16 +4,13 @@ import { db } from "@/lib/db"
 
 export async function GET() {
   try {
-    const session = await auth()
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
+    // Public endpoint - no auth required for viewing speakers
     const speakers = await (db as any).speaker.findMany({
+      where: { published: true },
       orderBy: { createdAt: "desc" },
     })
 
-    return NextResponse.json(speakers)
+    return NextResponse.json({ speakers })
   } catch (error) {
     console.error("Error fetching speakers:", error)
     return NextResponse.json(

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 
 interface AnimatedMarqueeHeroProps {
   tagline: string;
@@ -27,7 +28,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
 }) => {
   const FADE_IN_ANIMATION_VARIANTS = {
     hidden: { opacity: 0, y: 10 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 20 } },
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 100, damping: 20 } },
   };
 
   const duplicatedImages = [...images, ...images];
@@ -121,10 +122,13 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
                 rotate: `${(index % 2 === 0 ? -2 : 5)}deg`,
               }}
             >
-              <img
+              <Image
                 src={src}
                 alt={`Showcase image ${index + 1}`}
-                className="w-full h-full object-cover rounded-2xl shadow-md"
+                fill
+                sizes="(max-width: 768px) 192px, 256px"
+                className="object-cover rounded-2xl shadow-md"
+                loading="lazy"
               />
             </div>
           ))}

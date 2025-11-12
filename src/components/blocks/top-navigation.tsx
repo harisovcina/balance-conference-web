@@ -25,13 +25,20 @@ export function TopNavigation({ scrollThreshold }: TopNavigationProps = {}) {
   const pathname = usePathname()
 
   React.useEffect(() => {
+    let ticking = false
     const handleScroll = () => {
-      // Use custom threshold if provided, otherwise default to 80% of viewport height
-      const threshold = scrollThreshold ?? window.innerHeight * 0.8
-      setScrolledPastHero(window.scrollY > threshold)
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          // Use custom threshold if provided, otherwise default to 80% of viewport height
+          const threshold = scrollThreshold ?? window.innerHeight * 0.8
+          setScrolledPastHero(window.scrollY > threshold)
+          ticking = false
+        })
+        ticking = true
+      }
     }
 
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [scrollThreshold])
 
@@ -69,20 +76,6 @@ export function TopNavigation({ scrollThreshold }: TopNavigationProps = {}) {
             <div className="hidden lg:flex items-center space-x-8">
               <NavigationMenu>
                 <NavigationMenuList>
-                  <NavigationMenuItem>
-                    <NavigationMenuLink asChild>
-                      <Link href="/" className={cn(
-                        navigationMenuTriggerStyle(),
-                        "bg-transparent transition-colors duration-300",
-                        scrolledPastHero
-                          ? "text-gray-900 hover:bg-gray-100"
-                          : "text-white hover:bg-white/10"
-                      )}>
-                        Home
-                      </Link>
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
-
                   <NavigationMenuItem>
                     <NavigationMenuLink asChild>
                       <Link href="/about" className={cn(

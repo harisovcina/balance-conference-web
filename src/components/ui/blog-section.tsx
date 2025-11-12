@@ -197,7 +197,7 @@ export function BlogSection({
 	return (
 		<div className={cn('mx-auto w-full max-w-7xl grow', containerClassName)}>
 			<div className="space-y-4 px-4 py-12">
-				<h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
+				<h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
 					{heading}
 				</h1>
 				<p className="text-balance-100 text-lg">{description}</p>

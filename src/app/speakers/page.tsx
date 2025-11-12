@@ -1,11 +1,14 @@
 import React from 'react'
+import dynamicImport from 'next/dynamic'
 import { TopNavigation } from '@/components/blocks/top-navigation'
 import DarkVeil from '@/components/ui/dark-veil'
-import { HoverFooter } from '@/components/ui/hover-footer'
 import GradualBlur from '@/components/ui/gradual-blur'
 import { TeamSection, type TeamMember } from '@/components/ui/team'
-import { BlogSection } from '@/components/ui/blog-section'
 import { db } from '@/lib/db'
+
+// Lazy load below-the-fold components
+const BlogSection = dynamicImport(() => import('@/components/ui/blog-section').then(mod => ({ default: mod.BlogSection })))
+const HoverFooter = dynamicImport(() => import('@/components/ui/hover-footer').then(mod => ({ default: mod.HoverFooter })))
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
